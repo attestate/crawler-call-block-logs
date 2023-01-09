@@ -1,0 +1,35 @@
+{
+  "name": "crawler-call-block-logs",
+  "version": "0.0.1",
+  "description": "An attestate crawler strategy to download and transform Ethereum block event logs",
+  "files": ["src/extractor.mjs", "src/transfomer.mjs"],
+  "scripts": {
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/attestate/crawler-call-block-logs.git"
+  },
+  "keywords": [
+    "attestate",
+    "crawler",
+    "strategy",
+    "ethereum",
+    "event",
+    "logs",
+    "topics"
+  ],
+  "author": "Tim Daubenschütz <tim@daubenschuetz.de> (https://proofinprogress.com/)",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/attestate/crawler-call-block-logs/issues"
+  },
+  "homepage": "https://github.com/attestate/crawler-call-block-logs#readme",
+  "peerDependencies": {
+    "eth-fun": "0.9.x"
+  },
+  "devDependencies": {
+    "ava": "5.1.0",
+    "eth-fun": "0.9.2"
+  }
+}
