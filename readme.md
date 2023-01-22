@@ -3,7 +3,7 @@
 > An `@attestate/crawler` strategy to download and transform Ethereum block
 > event logs.
 
-- [Documentation](https://attestate.com/crawler/strategies/call-block-logs.html)
+- [Documentation](https://attestate.com/crawler-call-block-logs/main/index.html)
 
 # What is `@attestate/crawler`?
 
