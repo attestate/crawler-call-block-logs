@@ -13,7 +13,7 @@ author = 'Tim Daubenschütz'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['myst_parser', 'sphinx_multiversion']
+extensions = ['sphinx_multiversion']
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -30,5 +30,5 @@ html_context = {
     "github_user": "attestate",
     "github_repo": "crawler-call-block-logs",
     "github_version": "main",
-    "conf_py_path": "docs/source/",
+    "conf_py_path": "/docs/source/",
 }
