@@ -16,6 +16,8 @@ function filter(topic0, topic1, topic2, address) {
   };
 }
 
+export function onClose() {}
+
 export function onLine(line, topic0, topic1, topic2, address) {
   let logs;
   try {
