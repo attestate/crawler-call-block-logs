@@ -1,7 +1,5 @@
 //@format
 import { env } from "process";
-import { readFile } from "fs/promises";
-import assert from "assert";
 
 import { toHex } from "eth-fun";
 
@@ -19,21 +17,7 @@ if (env.RPC_API_KEY) {
   };
 }
 
-function blockNumber(start, end) {
-  return {
-    type: "json-rpc",
-    method: "eth_blockNumber",
-    params: [],
-    metadata: {
-      start,
-      end,
-    },
-    version,
-    options,
-  };
-}
-
-function callBlockLogs(number) {
+function callBlockLogs(number, address, topics) {
   number = toHex(number);
   return {
     type: "json-rpc",
@@ -42,6 +26,8 @@ function callBlockLogs(number) {
       {
         fromBlock: number,
         toBlock: number,
+        address,
+        topics,
       },
     ],
     version,
@@ -49,60 +35,43 @@ function callBlockLogs(number) {
   };
 }
 
-function generateMessages(start, end) {
+function generateMessages(start, end, address, topics) {
   const difference = end - start;
 
   let messages = [];
   for (let i of Array(difference).keys()) {
-    messages.push(callBlockLogs(start + i));
+    messages.push(callBlockLogs(start + i, address, topics));
   }
   return messages;
 }
 
-export function init(start = 0, end) {
+const exit = {
+  write: null,
+  messages: [{ type: "exit" }],
+};
+
+export function init(start = 0, end, address, topics) {
+  if (end === "latest" || start === "latest") {
+    log(`"latest" isn't a valid block number`);
+    return exit;
+  }
   if (end < start) {
     log(
-      `End (${end}) block number is smaller than start (${start}) block number`
+      `End (${end}) block number is smaller than start (${start}) block number.
+      Exiting strategy.`
     );
-    return {
-      write: null,
-      messages: [{ type: "exit" }],
-    };
+    return exit;
   }
+
   return {
     write: null,
-    messages: [blockNumber(start, end)],
+    messages: generateMessages(start, end, address, topics),
   };
 }
 
 export function update(message) {
-  if (message?.method == "eth_blockNumber") {
-    let endBlockNumber = message.metadata.end;
-    const latestBlockNumber = parseInt(message.results);
-    if (message.metadata.end > latestBlockNumber) {
-      log(
-        `Submitted end block number "${message.metadata.end}" is bigger than current chain tip block number "${latestBlockNumber}. Setting end block number to latest block number."`
-      );
-      endBlockNumber = latestBlockNumber;
-    }
-    if (message.metadata.start > latestBlockNumber) {
-      log(
-        `Start block number "${message.metadata.start}" is bigger than network's current block number "${latestBlockNumber}"`
-      );
-      return {
-        write: null,
-        messages: [{ type: "exit" }],
-      };
-    }
-
-    return {
-      write: null,
-      messages: generateMessages(message.metadata.start, endBlockNumber),
-    };
-  } else {
-    return {
-      messages: [],
-      write: JSON.stringify(message.results),
-    };
-  }
+  return {
+    messages: [],
+    write: JSON.stringify(message.results),
+  };
 }

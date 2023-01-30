@@ -1,7 +1,8 @@
 // @format
 import log from "./logger.mjs";
 
-function filter(topic0, topic1, topic2, address) {
+function filter(topics, address) {
+  const [topic0, topic1, topic2] = topics;
   return (log) => {
     if (
       (topic0 && topic0 !== log.topics[0]) ||
@@ -18,7 +19,7 @@ function filter(topic0, topic1, topic2, address) {
 
 export function onClose() {}
 
-export function onLine(line, topic0, topic1, topic2, address) {
+export function onLine(line, topics = [], address) {
   let logs;
   try {
     logs = JSON.parse(line);
@@ -27,7 +28,7 @@ export function onLine(line, topic0, topic1, topic2, address) {
     return;
   }
 
-  logs = logs.filter(filter(topic0, topic1, topic2, address));
+  logs = logs.filter(filter(topics, address));
   if (logs.length) {
     return JSON.stringify(logs);
   } else {
