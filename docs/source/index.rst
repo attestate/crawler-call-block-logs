@@ -35,6 +35,7 @@ Usage
   const range = {
     start: 16370086,
     end: 16370087, // start + 1
+    stepSize: 1
   };
 
   const address = "0x24da31e7bb182cb2cabfef1d88db19c2ae1f5572";
@@ -48,7 +49,7 @@ Usage
       name: "call-block-logs",
       extractor: {
         module: blockLogs.extractor,
-        args: [range.start, range.end, address, topics],
+        args: [range.start, range.end, address, topics, range.stepSize],
         output: {
           path: resolve(env.DATA_DIR, "call-block-logs-extraction"),
         },
@@ -76,14 +77,15 @@ ________________
 
   // NOTE: address and topics can be used to filter events at the Ethereum node
   //  level.
-  function init(start = 0, end, address, topics);
+  function init(start = 0, end, address, topics, stepSize = 1);
 
-* ``start`` Start block as a decimal-base number.
+* ``start`` Start block as a decimal-base number (default: 0).
 * ``end`` End block as a decimal-base number.
 * ``address`` "0x"- prefixed Ethereum address of where an event log originates
   from.
 * ``topics`` Array containing up to three 32 byte long "0x"-prefixed topic
   hashes related to the event.
+* ``stepSize`` The distance between ``fromBlock`` and ``toBlock`` (default: 1).
 
 Transformer module
 __________________

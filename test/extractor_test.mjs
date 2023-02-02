@@ -24,6 +24,18 @@ test("if events can be filtered by contract address and topics", async (t) => {
   t.deepEqual(messages[0].params[0].topics, topics);
 });
 
+test("if block range can be crawled where stepSize isn't a multiple of difference", (t) => {
+  const start = 0;
+  const end = 5;
+  const stepSize = 3;
+  const { write, messages } = blockLogs.init(start, end, null, null, stepSize);
+  t.is(messages.length, 2);
+  t.is(messages[0].params[0].fromBlock, "0x0");
+  t.is(messages[0].params[0].toBlock, "0x3");
+  t.is(messages[1].params[0].fromBlock, "0x3");
+  t.is(messages[1].params[0].toBlock, "0x5");
+});
+
 test("if eth_getLogs message is generated from block range", (t) => {
   const start = 16519229;
   const end = start + 1;

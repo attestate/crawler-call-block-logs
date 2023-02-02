@@ -17,15 +17,14 @@ if (env.RPC_API_KEY) {
   };
 }
 
-function callBlockLogs(number, address, topics) {
-  number = toHex(number);
+function callBlockLogs(fromBlock, toBlock, address, topics) {
   return {
     type: "json-rpc",
     method: "eth_getLogs",
     params: [
       {
-        fromBlock: number,
-        toBlock: number,
+        fromBlock: toHex(fromBlock),
+        toBlock: toHex(toBlock),
         address,
         topics,
       },
@@ -35,12 +34,16 @@ function callBlockLogs(number, address, topics) {
   };
 }
 
-function generateMessages(start, end, address, topics) {
-  const difference = end - start;
-
+function generateMessages(start, end, address, topics, stepSize) {
   let messages = [];
-  for (let i of Array(difference).keys()) {
-    messages.push(callBlockLogs(start + i, address, topics));
+  // NOTE: Sliding window between "...elem elem elem elem elem..."
+  //                                      <head>         <tail>
+  for (let head = start; head < end; head += stepSize) {
+    let tail = head + stepSize;
+    if (tail > end) {
+      tail = end;
+    }
+    messages.push(callBlockLogs(head, tail, address, topics));
   }
   return messages;
 }
@@ -50,7 +53,7 @@ const exit = {
   messages: [{ type: "exit" }],
 };
 
-export function init(start = 0, end, address, topics) {
+export function init(start = 0, end, address, topics, stepSize = 1) {
   if (end === "latest" || start === "latest") {
     log(`"latest" isn't a valid block number`);
     return exit;
@@ -65,7 +68,7 @@ export function init(start = 0, end, address, topics) {
 
   return {
     write: null,
-    messages: generateMessages(start, end, address, topics),
+    messages: generateMessages(start, end, address, topics, stepSize),
   };
 }
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- For `extractor.init`, we add `stepSize` as an input parameter to automate the
+  distance between `fromBlock` and `toBlock`.
+
 ## 0.2.0
 
 - Extraction module: Add `address` and `topics` filter
