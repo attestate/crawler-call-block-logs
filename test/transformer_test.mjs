@@ -1,7 +1,7 @@
 //@format
 import test from "ava";
 
-import { onLine } from "../src/transformer.mjs";
+import * as blockLogs from "../src/index.mjs";
 
 const snapshot0 = [
   {
@@ -103,7 +103,7 @@ test("call-block-logs transformer", (t) => {
     "0x0000000000000000000000000000000000000000000000000000000000000000";
   const address = "0x2b5426a5b98a3e366230eba9f95a24f09ae4a584";
   const line = JSON.stringify(snapshot0);
-  const result = onLine(line, [topic0, topic1], address);
+  const result = blockLogs.transformer.onLine(line, [topic0, topic1], address);
   const parsedResult = JSON.parse(result);
   t.is(
     parsedResult[0].transactionHash,

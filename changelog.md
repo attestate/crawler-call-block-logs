@@ -1,9 +1,13 @@
 # Changelog
 
+## 0.2.2
+
+- Implement `loader` module for LMDB key-generation
+
 ## 0.2.1
 
 - For `extractor.init`, we add `stepSize` as an input parameter to automate the
-  distance between `fromBlock` and `toBlock`.
+  distance between `fromBlock` and `toBlock`
 
 ## 0.2.0
 
@@ -13,7 +17,7 @@
 
 ## 0.1.0
 
-- (breaking) Fix including `transformer.mjs` and `logger.mjs` files.
+- (breaking) Fix including `transformer.mjs` and `logger.mjs` files
 
 ## 0.0.1
 
