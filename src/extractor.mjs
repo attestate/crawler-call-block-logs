@@ -53,7 +53,7 @@ const exit = {
   messages: [{ type: "exit" }],
 };
 
-export function init(start = 0, end, address, topics, stepSize = 1) {
+export function init({ start = 0, end, address, topics, stepSize = 1 }) {
   if (end === "latest" || start === "latest") {
     log(`"latest" isn't a valid block number`);
     return exit;

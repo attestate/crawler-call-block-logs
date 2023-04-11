@@ -19,7 +19,7 @@ function filter(topics, address) {
 
 export function onClose() {}
 
-export function onLine(line, topics = [], address) {
+export function onLine(line, { topics = [], address }) {
   let logs;
   try {
     logs = JSON.parse(line);

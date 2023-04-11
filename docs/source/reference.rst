@@ -8,7 +8,7 @@ ________________
 
   // NOTE: address and topics can be used to filter events at the Ethereum node
   //  level.
-  function init(start = 0, end, address, topics, stepSize = 1)
+  function init({start = 0, end, address, topics, stepSize = 1})
 
 * ``start`` Start block as a natural number in decimal-base (default: 0).
 * ``end`` End block as a natural number in decimal-base.
@@ -24,7 +24,7 @@ __________________
 
 .. code-block:: javascript
 
-  function onLine(line, topics = [], address)
+  function onLine(line, {topics = [], address})
 
 * ``line`` Is an argument defined by ``@attestate/crawler`` internally. It is a 
   line within the strategy's ``input.path`` file.
