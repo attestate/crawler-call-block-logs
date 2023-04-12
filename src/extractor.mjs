@@ -34,12 +34,12 @@ function callBlockLogs(fromBlock, toBlock, address, topics) {
   };
 }
 
-function generateMessages(start, end, address, topics, stepSize) {
+function generateMessages(start, end, address, topics, blockspan) {
   let messages = [];
   // NOTE: Sliding window between "...elem elem elem elem elem..."
   //                                      <head>         <tail>
-  for (let head = start; head < end; head += stepSize) {
-    let tail = head + stepSize;
+  for (let head = start; head < end; head += blockspan) {
+    let tail = head + blockspan;
     if (tail > end) {
       tail = end;
     }
@@ -53,9 +53,18 @@ const exit = {
   messages: [{ type: "exit" }],
 };
 
-export function init({ start = 0, end, address, topics, stepSize = 1 }) {
-  if (end === "latest" || start === "latest") {
-    log(`"latest" isn't a valid block number`);
+export function init({
+  args: { start = 0, end, address, topics, blockspan = 1 },
+  state,
+}) {
+  if (end === "latest" || !end) {
+    end = state.remote;
+  }
+  if (state.local > start) {
+    start = state.local;
+  }
+  if (!Number.isInteger(start) || !Number.isInteger(end)) {
+    log(`start "${start}" or end "${end}" isn't an integer`);
     return exit;
   }
   if (end < start) {
@@ -68,11 +77,11 @@ export function init({ start = 0, end, address, topics, stepSize = 1 }) {
 
   return {
     write: null,
-    messages: generateMessages(start, end, address, topics, stepSize),
+    messages: generateMessages(start, end, address, topics, blockspan),
   };
 }
 
-export function update(message) {
+export function update({ message }) {
   return {
     messages: [],
     write: JSON.stringify(message.results),

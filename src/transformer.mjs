@@ -19,10 +19,10 @@ function filter(topics, address) {
 
 export function onClose() {}
 
-export function onLine(line, { topics = [], address }) {
+export function onLine({ args: { topics = [], address }, state }) {
   let logs;
   try {
-    logs = JSON.parse(line);
+    logs = JSON.parse(state.line);
   } catch (err) {
     log(err.toString());
     return;

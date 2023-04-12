@@ -102,11 +102,14 @@ test("call-block-logs transformer", (t) => {
   const topic1 =
     "0x0000000000000000000000000000000000000000000000000000000000000000";
   const address = "0x2b5426a5b98a3e366230eba9f95a24f09ae4a584";
-  const line = JSON.stringify(snapshot0);
-  const result = blockLogs.transformer.onLine(line, {
+  const args = {
     topics: [topic0, topic1],
     address,
-  });
+  };
+  const state = {
+    line: JSON.stringify(snapshot0),
+  };
+  const result = blockLogs.transformer.onLine({ args, state });
   const parsedResult = JSON.parse(result);
   t.is(
     parsedResult[0].transactionHash,

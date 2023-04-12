@@ -3,6 +3,27 @@ import test from "ava";
 
 import * as blockLogs from "../src/index.mjs";
 
+const { prefixed, unfix, serialize } = blockLogs.loader;
+
+test("if prefixed hex string can be identified", (t) => {
+  t.true(prefixed("0xabc"));
+  t.false(prefixed("abc"));
+});
+
+test("if prefixed hex string can be converted to unfixed string", (t) => {
+  t.is(unfix("0xabc"), "abc");
+  t.throws(() => unfix("abc"));
+});
+
+test("if value can be serialized for lmdb sorting", (t) => {
+  const length = 8;
+  const actual0 = serialize(["0x103c8ce", "0xac"], length);
+  t.deepEqual(actual0, ["0103c8ce", "000000ac"]);
+
+  const actual1 = serialize(["0xf42400", "0x00"], length);
+  t.deepEqual(actual1, ["00f42400", "00000000"]);
+});
+
 test("generating direct ids from lines", (t) => {
   const snapshot = [
     {
@@ -58,7 +79,10 @@ test("generating direct ids from lines", (t) => {
     },
   ];
 
-  const generator = blockLogs.loader.direct(JSON.stringify(snapshot));
+  const state = {
+    line: JSON.stringify(snapshot),
+  };
+  const generator = blockLogs.loader.direct({ state });
 
   const v0 = generator.next().value;
   t.deepEqual(v0, {
@@ -134,16 +158,28 @@ test("generating lexographic ids from lines", (t) => {
     },
   ];
 
-  const generator = blockLogs.loader.order(JSON.stringify(snapshot));
+  const state = {
+    line: JSON.stringify(snapshot),
+  };
+  const generator = blockLogs.loader.order({ state });
 
   const v0 = generator.next().value;
-  t.deepEqual(v0, { key: ["0x00", "0x00"], value: "0x0a" });
+  t.deepEqual(v0, {
+    key: ["0000000000000000", "0000000000000000"],
+    value: "0x0a",
+  });
 
   const v1 = generator.next().value;
-  t.deepEqual(v1, { key: ["0x00", "0x01"], value: "0x0b" });
+  t.deepEqual(v1, {
+    key: ["0000000000000000", "0000000000000001"],
+    value: "0x0b",
+  });
 
   const v2 = generator.next().value;
-  t.deepEqual(v2, { key: ["0x01", "0x00"], value: "0x0c" });
+  t.deepEqual(v2, {
+    key: ["0000000000000001", "0000000000000000"],
+    value: "0x0c",
+  });
 
   const v3 = generator.next();
   t.true(v3.done);
