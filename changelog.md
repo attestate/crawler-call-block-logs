@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0
+
+- NOTE: This version is released with the new @attestate/crawler@0.5.0 which
+  features a bunch of changes on the lifecycle API level
+- (breaking) All input signatures have been adjusted to new lifecycle API
+  interface.
+- A new state module has been added to track the lastest local and remote state.
+- For storing ordered values into the LMDB, the encoding was adjusted to store
+  un-prefixed hex strings that are padded (for LMDB's ordering to work
+  properly).
+- All docs have been updated, but docs for the state/coordinator module are
+  still TBD.
+
 ## 0.2.2
 
 - Implement `loader` module for LMDB key-generation
