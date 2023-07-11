@@ -7,17 +7,7 @@ import log from "./logger.mjs";
 
 const version = "0.0.1";
 
-const options = {
-  url: env.RPC_HTTP_HOST,
-};
-
-if (env.RPC_API_KEY) {
-  options.headers = {
-    Authorization: `Bearer ${env.RPC_API_KEY}`,
-  };
-}
-
-function callBlockLogs(fromBlock, toBlock, address, topics) {
+function callBlockLogs(fromBlock, toBlock, address, topics, options) {
   return {
     type: "json-rpc",
     method: "eth_getLogs",
@@ -34,7 +24,7 @@ function callBlockLogs(fromBlock, toBlock, address, topics) {
   };
 }
 
-function generateMessages(start, end, address, topics, blockspan) {
+function generateMessages(start, end, address, topics, blockspan, options) {
   let messages = [];
   // NOTE: Sliding window between "...elem elem elem elem elem..."
   //                                      <head>         <tail>
@@ -43,7 +33,7 @@ function generateMessages(start, end, address, topics, blockspan) {
     if (tail > end) {
       tail = end;
     }
-    messages.push(callBlockLogs(head, tail, address, topics));
+    messages.push(callBlockLogs(head, tail, address, topics, options));
   }
   return messages;
 }
@@ -56,7 +46,17 @@ const exit = {
 export function init({
   args: { start = 0, end, address, topics, blockspan = 1 },
   state,
+  environment,
 }) {
+  const options = {
+    url: environment.rpcHttpHost,
+  };
+
+  if (environment.rpcApiKey) {
+    options.headers = {
+      Authorization: `Bearer ${environment.rpcApiKey}`,
+    };
+  }
   if (end === "latest" || !end) {
     end = state.remote;
   }
@@ -77,7 +77,7 @@ export function init({
 
   return {
     write: null,
-    messages: generateMessages(start, end, address, topics, blockspan),
+    messages: generateMessages(start, end, address, topics, blockspan, options),
   };
 }
 

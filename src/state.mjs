@@ -1,17 +1,15 @@
 // @format
-import { env } from "process";
-
-const options = {
-  url: env.RPC_HTTP_HOST,
-};
-
-if (env.RPC_API_KEY) {
-  options.headers = {
-    Authorization: `Bearer ${env.RPC_API_KEY}`,
+export async function remote({ execute, environment }) {
+  const options = {
+    url: environment.rpcHttpHost,
   };
-}
 
-export async function remote(execute) {
+  if (environment.rpcApiKey) {
+    options.headers = {
+      Authorization: `Bearer ${environment.rpcApiKey}`,
+    };
+  }
+
   const outcome = await execute({
     type: "json-rpc",
     method: "eth_blockNumber",

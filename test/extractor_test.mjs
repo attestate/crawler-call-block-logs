@@ -5,14 +5,12 @@ import test from "ava";
 
 import * as blockLogs from "../src/index.mjs";
 
-const options = {
-  url: env.RPC_HTTP_HOST,
+const environment = {
+  rpcHttpHost: env.RPC_HTTP_HOST,
 };
 
 if (env.RPC_API_KEY) {
-  options.headers = {
-    Authorization: `Bearer ${env.RPC_API_KEY}`,
-  };
+  environment.rpcApiKey = env.RPC_API_KEY;
 }
 
 test("if events can be filtered by contract address and topics", async (t) => {
@@ -23,7 +21,11 @@ test("if events can be filtered by contract address and topics", async (t) => {
     topics: [1, 2],
   };
   const state = {};
-  const { write, messages } = blockLogs.extractor.init({ args, state });
+  const { write, messages } = blockLogs.extractor.init({
+    args,
+    state,
+    environment,
+  });
   t.is(messages.length, 1);
   t.is(messages[0].params[0].address, args.address);
   t.deepEqual(messages[0].params[0].topics, args.topics);
@@ -36,7 +38,11 @@ test("if block range can be crawled where blockspan isn't a multiple of differen
     blockspan: 3,
   };
   const state = {};
-  const { write, messages } = blockLogs.extractor.init({ args, state });
+  const { write, messages } = blockLogs.extractor.init({
+    args,
+    state,
+    environment,
+  });
   t.is(messages.length, 2);
   t.is(messages[0].params[0].fromBlock, "0x0");
   t.is(messages[0].params[0].toBlock, "0x3");
@@ -49,7 +55,11 @@ test("if eth_getLogs message is generated from block range", (t) => {
   const end = start + 1;
   const state = {};
   const args = { start, end };
-  const { write, messages } = blockLogs.extractor.init({ args, state });
+  const { write, messages } = blockLogs.extractor.init({
+    args,
+    state,
+    environment,
+  });
   t.truthy(messages[0]);
   t.is(messages.length, 1);
 });
@@ -57,6 +67,10 @@ test("if eth_getLogs message is generated from block range", (t) => {
 test("if call-block-logs init throws when start block is bigger than end block", (t) => {
   const state = {};
   const args = { start: 2, end: 1 };
-  const { write, messages } = blockLogs.extractor.init({ args, state });
+  const { write, messages } = blockLogs.extractor.init({
+    args,
+    state,
+    environment,
+  });
   t.is(messages[0].type, "exit");
 });
