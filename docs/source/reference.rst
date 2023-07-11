@@ -8,7 +8,7 @@ ________________
 
   // NOTE: address and topics can be used to filter events at the Ethereum node
   //  level.
-  function init({start = 0, end, address, topics, blockspan = 1})
+  function init({ args: {start = 0, end, address, topics, blockspan = 1}})
 
 * ``start`` Start block as a natural number in decimal-base (default: 0).
 * ``end`` End block as a natural number in decimal-base.
