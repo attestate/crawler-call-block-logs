@@ -23,7 +23,7 @@ __________________
 
 .. code-block:: javascript
 
-  function onLine({args: {topics = [], address}, state: {line}})
+  function onLine({args: {topics = [], address, inputs}, state: {line}})
 
 * ``line`` Is an argument defined by ``@attestate/crawler`` internally. It is a 
   line within the strategy's ``input.path`` file.
@@ -31,6 +31,9 @@ __________________
   from.
 * ``topics`` Array containing up to three 32 byte long "0x"-prefixed topic
   hashes related to the event or an array of arrays containing such values.
+* ``inputs`` When defined, it replaces the event log's "data" property with a
+  parsed event log using `web3-eth-abi@1.4.0's decodeLog
+  <https://web3js.readthedocs.io/en/v1.4.0/web3-eth-abi.html#decodelog>`_.
 
 Loader module
 _____________

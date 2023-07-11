@@ -116,3 +116,36 @@ test("call-block-logs transformer", (t) => {
     "0x922fa24135d2d38aea91b43b2d7334063bff3e98a4e63f666a0db1e446f2963c"
   );
 });
+
+test("onLine function with inputs argument", async (t) => {
+  const inputs = [
+    {
+      type: "bytes32[3]",
+      name: "data",
+      indexed: false,
+    },
+  ];
+
+  const args = {
+    inputs,
+    topics: [
+      "0x9fcbf2ac7d9825115ae81812d10efa7fce04fcc9ca46f1d416aba53cdea8483e",
+    ],
+  };
+
+  const state = {
+    line: `[
+       {
+         "data": "0xecdb588ffce9d2ad2dbc0889841803d17b0fe173502c7fc1e906bc39295d42f797b193e6acedc0be15fb5eaa938320504eece153e1e1b83229e64dfe0f7cc64e4e774b8530d6f3a21c449a6f0d9a1229ab2b8c47000000000000000000000001",
+         "topics": ["0x9fcbf2ac7d9825115ae81812d10efa7fce04fcc9ca46f1d416aba53cdea8483e"],
+         "address": "0xabc"
+       }
+     ]`,
+  };
+
+  const result = blockLogs.transformer.onLine({ args, state });
+  const parsedResult = JSON.parse(result);
+
+  t.true(Array.isArray(parsedResult[0].data.data));
+  t.is(parsedResult[0].data.data.length, 3);
+});
