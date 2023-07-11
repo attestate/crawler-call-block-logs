@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- Stop using `env.VARIABLES` and instead rely on passed-in variables from the 
+  crawler's lifecycle using `environment` parameter
+- Add event log parsing to transformer. Using `args.inputs` a list of inputs can
+  be passed to decode an event log into Solidity types.
+
 ## 0.3.0
 
 - NOTE: This version is released with the new @attestate/crawler@0.5.0 which
