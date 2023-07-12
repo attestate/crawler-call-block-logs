@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- Update peerDependency @attestate/crawler to 0.6.x
+
 ## 0.4.0
 
 - Stop using `env.VARIABLES` and instead rely on passed-in variables from the 

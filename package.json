@@ -27,7 +27,7 @@
   "homepage": "https://github.com/attestate/crawler-call-block-logs#readme",
   "peerDependencies": {
     "eth-fun": "0.9.x",
-    "@attestate/crawler": "0.5.x"
+    "@attestate/crawler": "0.6.x"
   },
   "devDependencies": {
     "ava": "5.1.0",
