@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2
+
+- Add `args.includeTimestamp` to extractor strategy. Now Ethereum block logs'
+  timestamps can be downloaded additionally and they'll be available in the log
+  at `results[].block.timestamp` as a hexa-decimal value.
+
 ## 0.4.1
 
 - Update peerDependency @attestate/crawler to 0.6.x
