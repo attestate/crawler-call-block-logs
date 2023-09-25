@@ -43,11 +43,7 @@ const exit = {
   messages: [{ type: "exit" }],
 };
 
-export function init({
-  args: { start = 0, end, address, topics, blockspan = 1 },
-  state,
-  environment,
-}) {
+function generateOptions(environment) {
   const options = {
     url: environment.rpcHttpHost,
   };
@@ -57,6 +53,16 @@ export function init({
       Authorization: `Bearer ${environment.rpcApiKey}`,
     };
   }
+  return options;
+}
+
+export function init({
+  args: { start = 0, end, address, topics, blockspan = 1 },
+  state,
+  environment,
+}) {
+  const options = generateOptions(environment);
+
   if (end === "latest" || !end) {
     end = state.remote;
   }
@@ -81,9 +87,64 @@ export function init({
   };
 }
 
-export function update({ message }) {
+const returnTransactions = false;
+const blockNumberMessage = (blockNumber, options, log) => ({
+  version: "0.0.1",
+  type: "json-rpc",
+  method: "eth_getBlockByNumber",
+  params: [blockNumber, returnTransactions],
+  options,
+  metadata: {
+    log,
+  },
+});
+
+function updateBlock({ message }) {
   return {
     messages: [],
-    write: JSON.stringify(message.results),
+    write: JSON.stringify([
+      {
+        ...message.metadata.log,
+        block: {
+          timestamp: message.results.timestamp,
+        },
+      },
+    ]),
   };
+}
+
+function updateLogs({ args, message, environment }) {
+  if (args && !args.includeTimestamp) {
+    return {
+      messages: [],
+      write: JSON.stringify(message.results),
+    };
+  }
+
+  if (!Array.isArray(message.results)) {
+    return {
+      messages: [],
+      write: null,
+    };
+  }
+
+  const messages = [];
+  const options = generateOptions(environment);
+  for (const log of message.results) {
+    messages.push(blockNumberMessage(log.blockNumber, options, log));
+  }
+
+  return {
+    messages,
+    write: null,
+  };
+}
+
+export function update({ args, message, environment }) {
+  if (message.method === "eth_getLogs") {
+    return updateLogs({ args, message, environment });
+  }
+  if (message.method === "eth_getBlockByNumber") {
+    return updateBlock({ args, message, environment });
+  }
 }

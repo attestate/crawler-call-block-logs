@@ -13,6 +13,69 @@ if (env.RPC_API_KEY) {
   environment.rpcApiKey = env.RPC_API_KEY;
 }
 
+test("to make sure no timestamp is included when inclusion flag is false", async (t) => {
+  const args = {
+    start: 18123080,
+    end: 18123082,
+    address: "0xebb15487787cbf8ae2ffe1a6cca5a50e63003786",
+    topics: [
+      "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    blockspan: 5000,
+    includeTimestamp: false,
+  };
+  const state = {};
+  const message = {
+    method: "eth_getLogs",
+    results: [
+      {
+        blockNumber: "0x1148948",
+      },
+    ],
+  };
+  const response = blockLogs.extractor.update({
+    message,
+    args,
+    state,
+    environment,
+  });
+  t.is(response.messages.length, 0);
+  t.truthy(JSON.parse(response.write)[0].blockNumber);
+  t.falsy(JSON.parse(response.write)[0].block);
+});
+
+test("if timestamp is included when includeTimestamp flag is set", async (t) => {
+  const args = {
+    start: 18123080,
+    end: 18123082,
+    address: "0xebb15487787cbf8ae2ffe1a6cca5a50e63003786",
+    topics: [
+      "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    blockspan: 5000,
+    includeTimestamp: true,
+  };
+  const state = {};
+  const message = {
+    method: "eth_getLogs",
+    results: [
+      {
+        blockNumber: "0x1148948",
+      },
+    ],
+  };
+  const response = await blockLogs.extractor.update({
+    message,
+    args,
+    state,
+    environment,
+  });
+  t.is(response.messages.length, 1);
+  t.is(response.messages[0].method, "eth_getBlockByNumber");
+});
+
 test("if events can be filtered by contract address and topics", async (t) => {
   const args = {
     start: 1,

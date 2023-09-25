@@ -17,6 +17,8 @@ ________________
 * ``topics`` Array containing up to three 32 byte long "0x"-prefixed topic
   hashes related to the event or an array of arrays containing such values.
 * ``blockspan`` The distance between ``fromBlock`` and ``toBlock`` in decimal-base (default: 1).
+* ``includeTimestamp`` Flag to include the block timestamp as ``block.timestamp`` in
+  the result object.
 
 Transformer module
 __________________
