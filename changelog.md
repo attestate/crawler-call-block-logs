@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.3
+
+- Add `args.includeValue` to extractor strategy. This downloads the transaction
+  itself and adds the `value` field to the pipeline's output using
+  `eth_getTransactionByHash`.
+
 ## 0.4.2
 
 - Add `args.includeTimestamp` to extractor strategy. Now Ethereum block logs'
