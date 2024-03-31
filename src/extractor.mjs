@@ -99,17 +99,55 @@ const blockNumberMessage = (blockNumber, options, log) => ({
   },
 });
 
-function updateBlock({ message }) {
+const transactionByHash = (hash, options, log) => ({
+  version: "0.0.1",
+  type: "json-rpc",
+  method: "eth_getTransactionByHash",
+  params: [hash],
+  options,
+  metadata: {
+    log,
+  },
+});
+
+function updateTransaction({ message }) {
   return {
     messages: [],
     write: JSON.stringify([
       {
         ...message.metadata.log,
         block: {
-          timestamp: message.results.timestamp,
+          ...message.metadata.log.block,
+        },
+        transaction: {
+          value: message.results.value,
         },
       },
     ]),
+  };
+}
+
+function updateBlock({ args, environment, message }) {
+  const log = {
+    ...message.metadata.log,
+    block: {
+      timestamp: message.results.timestamp,
+    },
+  };
+
+  if (args && !args.includeValue) {
+    return {
+      messages: [],
+      write: JSON.stringify([log]),
+    };
+  }
+
+  const options = generateOptions(environment);
+  const messages = [transactionByHash(log.transactionHash, options, log)];
+
+  return {
+    messages,
+    write: null,
   };
 }
 
@@ -146,5 +184,8 @@ export function update({ args, message, environment }) {
   }
   if (message.method === "eth_getBlockByNumber") {
     return updateBlock({ args, message, environment });
+  }
+  if (message.method === "eth_getTransactionByHash") {
+    return updateTransaction({ args, message, environment });
   }
 }

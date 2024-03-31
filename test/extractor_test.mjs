@@ -45,6 +45,43 @@ test("to make sure no timestamp is included when inclusion flag is false", async
   t.falsy(JSON.parse(response.write)[0].block);
 });
 
+test("if value is included when includeValue flag is set", async (t) => {
+  const args = {
+    start: 18123080,
+    end: 18123082,
+    address: "0xebb15487787cbf8ae2ffe1a6cca5a50e63003786",
+    topics: [
+      "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+    ],
+    blockspan: 5000,
+    includeTimestamp: true,
+    includeValue: true,
+  };
+  const state = {};
+  const message = {
+    method: "eth_getBlockByNumber",
+    metadata: {
+      log: {
+        transactionHash: "txhash",
+      },
+    },
+    results: {
+      timestamp: "0x12345",
+      blockNumber: "0x1148948",
+    },
+  };
+  const response = await blockLogs.extractor.update({
+    message,
+    args,
+    state,
+    environment,
+  });
+  t.is(response.messages.length, 1);
+  t.is(response.messages[0].method, "eth_getTransactionByHash");
+  t.is(response.messages[0].params[0], "txhash");
+});
+
 test("if timestamp is included when includeTimestamp flag is set", async (t) => {
   const args = {
     start: 18123080,

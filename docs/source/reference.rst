@@ -19,6 +19,8 @@ ________________
 * ``blockspan`` The distance between ``fromBlock`` and ``toBlock`` in decimal-base (default: 1).
 * ``includeTimestamp`` Flag to include the block timestamp as ``block.timestamp`` in
   the result object.
+* ``includeValue`` Flag to include the transaction's value as
+  ``transaction.value`` in the result object.
 
 Transformer module
 __________________
