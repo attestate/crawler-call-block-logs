@@ -1,6 +1,6 @@
 {
   "name": "@attestate/crawler-call-block-logs",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "An attestate crawler strategy to download and transform Ethereum block event logs",
   "main": "src/index.mjs",
   "scripts": {
