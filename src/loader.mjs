@@ -1,6 +1,8 @@
 // @format
 import log from "./logger.mjs";
 
+export { aggregate } from "./aggregator.mjs";
+
 export function prefixed(value) {
   return value.slice(0, 2) === "0x";
 }
