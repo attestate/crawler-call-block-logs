@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.4
+
+- Add aggregate function and export in loader
+
 ## 0.4.3
 
 - Add `args.includeValue` to extractor strategy. This downloads the transaction
