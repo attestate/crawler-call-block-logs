@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.5
+
+- Add entire transaction data to output of extractor
+
 ## 0.4.4
 
 - Add aggregate function and export in loader
