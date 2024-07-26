@@ -120,7 +120,7 @@ function updateTransaction({ message }) {
           ...message.metadata.log.block,
         },
         transaction: {
-          value: message.results.value,
+          ...message.results,
         },
       },
     ]),
