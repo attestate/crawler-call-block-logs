@@ -1,5 +1,65 @@
 # Changelog
 
+## 0.5.0
+
+Improvements to the aggregation function for ERC721 token transfer logs:
+
+- We used to roughly determine the holding period of someone owning a type of
+  token in the aggregation function. For example, if someone held token:0 from
+  time:0 to time:2, and then token:1 from time:3 to time:4, for simplicity, we
+  just said that the person then held tokens between time:0 and time:4. This is
+  is obviously imprecise.
+- We have now adjusted the aggregation function as to precisely list the token
+  holding period as a unix time stamp on a per-token basis.
+
+```
+{
+  //...
+  tokens: {
+    "5": [{
+      start: 0,
+      end: 2
+    },{
+      start: 3,
+      end: 4
+    }]
+    "6": [{
+      start: 10
+    }]
+  },
+  //...
+}
+```
+
+As you can see, we're now keeping track of every token precisely for how long it
+has been in the address's possession. One suboptimal result that we're still
+releasing in this version is inter-block token transfer tracking. The following
+can appear as a user's token holdings:
+
+```
+{
+  //...
+  tokens: {
+    "5": [{
+      start: 0,
+      end: 2
+    },{
+      start: 2,
+      end: 3
+    }]
+  },
+  //...
+}
+```
+
+Here, the user did a rapid transfers of the token:5 at time:2. Maybe they sent
+the token to another user, and the other use immediately sent the token back in
+the same block. We call this type of interaction "inter-block transfers."
+
+While this output is ugly, it is strictly speaking not wrong. As the runtime
+complexity and readability of the code worsened when trying to fix this cosmetic
+issue, I left it as is shown above.
+
 ## 0.4.5
 
 - Add entire transaction data to output of extractor
