@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1
+
+- (fix) 0.5.0 was labeled to only be compatible with maximally
+  @attestate/crawler@0.6.1. This is now fixed.
+
 ## 0.5.0
 
 Improvements to the aggregation function for ERC721 token transfer logs:
