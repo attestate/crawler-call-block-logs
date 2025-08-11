@@ -25,13 +25,16 @@
     "url": "https://github.com/attestate/crawler-call-block-logs/issues"
   },
   "homepage": "https://github.com/attestate/crawler-call-block-logs#readme",
+  "engines": {
+    "node": ">=20"
+  },
   "peerDependencies": {
-    "@attestate/crawler": "^0.6.1",
-    "eth-fun": "0.9.3"
+    "@attestate/crawler": "^0.6.3",
+    "eth-fun": "0.10.0"
   },
   "devDependencies": {
     "ava": "5.1.0",
-    "eth-fun": "0.9.3",
+    "eth-fun": "0.10.0",
     "lmdb": "2.7.11"
   },
   "ava": {

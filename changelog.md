@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2
+
+- Support node 20
+
 ## 0.5.1
 
 - (fix) 0.5.0 was labeled to only be compatible with maximally
