@@ -41,5 +41,8 @@
     "environmentVariables": {
       "DEBUG": "@attestate/crawler-call-block-logs"
     }
+  },
+  "dependencies": {
+    "viem": "2.38.2"
   }
 }

@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.6.0
+
+- Add WebSocket support via `state.watch()` function for real-time block monitoring
+- New `watch()` function enables subscription to new block headers via WebSocket (e.g., Alchemy, Infura)
+- Replaces polling-based approach (coordinator `interval`) with event-driven WebSocket subscriptions
+- Requires `RPC_WS_HOST` environment variable (e.g., `wss://opt-mainnet.g.alchemy.com/v2/YOUR_API_KEY`)
+- Improves performance: real-time notifications (~1-2s latency) vs polling delays
+- Better resource efficiency: single persistent WebSocket connection vs repeated HTTP calls
+- Uses viem's `watchBlockNumber` with automatic reconnection and missed block handling
+- Chain-agnostic: works without hardcoded chain configuration
+
+### Migration from polling to WebSocket
+
+**Before (polling with interval):**
+```javascript
+coordinator: {
+  archive: false,
+  module: blockLogs.state,
+  interval: 15000,  // Poll every 15 seconds
+}
+```
+
+**After (WebSocket subscription):**
+```javascript
+coordinator: {
+  archive: false,
+  module: blockLogs.state,  // Now includes watch() function
+}
+```
+
+The coordinator will automatically use WebSocket subscriptions when `RPC_WS_HOST` is configured and the `watch()` function is available.
+
 ## 0.5.2
 
 - Support node 20

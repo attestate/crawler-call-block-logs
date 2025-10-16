@@ -66,3 +66,37 @@ generate an identifier which defines a total order among ``transactionHash``es.
 <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*>`_.
 As the ``key``, it defines the ``transactionHash`` to generate an identifier
 which lets us directly access the log through ``value``.
+
+State module
+____________
+
+The state module provides coordinator functionality for continuous blockchain
+monitoring via WebSocket subscriptions.
+
+.. code-block:: javascript
+
+  function watch({ environment, onNewBlock })
+
+* ``environment`` Object containing environment variables (e.g., ``rpcWsHost``)
+  passed from the crawler configuration.
+* ``onNewBlock`` Callback function invoked with the new block number when a new
+  block is detected via WebSocket subscription.
+
+The ``watch()`` function:
+
+* Establishes a WebSocket connection to the RPC endpoint specified in
+  ``environment.rpcWsHost`` (e.g., ``wss://opt-mainnet.g.alchemy.com/v2/YOUR_API_KEY``)
+* Subscribes to new block headers using viem's ``watchBlockNumber``
+* Automatically handles reconnection if the connection is lost
+* Detects and emits missed blocks with ``emitMissed: true``
+* Returns an ``unwatch()`` function to cleanly close the subscription
+
+The function provides real-time block notifications with ~1-2 second latency,
+replacing the previous polling-based approach which used an ``interval``
+parameter.
+
+.. note::
+   Prior to version 0.6.0, continuous monitoring required a polling-based
+   ``interval`` parameter in the coordinator configuration. This has been
+   replaced with WebSocket subscriptions via the ``watch()`` function for
+   better performance and resource efficiency.
