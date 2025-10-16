@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1
+
+- Update peer dependency to `@attestate/crawler@^0.7.0` for compatibility with WebSocket-based coordinator
+
 ## 0.6.0
 
 - Add WebSocket support via `state.watch()` function for real-time block monitoring
