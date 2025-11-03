@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "@attestate/crawler": "^0.7.0",
-    "eth-fun": "0.10.0"
+    "eth-fun": "0.10.x"
   },
   "devDependencies": {
     "ava": "5.1.0",
