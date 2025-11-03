@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2
+
+- Make eth-fun@0.10.x peer dependency
+
 ## 0.6.1
 
 - Update peer dependency to `@attestate/crawler@^0.7.0` for compatibility with WebSocket-based coordinator
