@@ -4,6 +4,7 @@ import { env } from "process";
 import { toHex } from "eth-fun";
 
 import log from "./logger.mjs";
+import { rpcHttpHost } from "./hosts.mjs";
 
 const version = "0.0.1";
 
@@ -45,7 +46,7 @@ const exit = {
 
 function generateOptions(environment) {
   const options = {
-    url: environment.rpcHttpHost,
+    url: rpcHttpHost(environment),
   };
 
   if (environment.rpcApiKey) {

@@ -71,32 +71,26 @@ State module
 ____________
 
 The state module provides coordinator functionality for continuous blockchain
-monitoring via WebSocket subscriptions.
+monitoring by polling ``eth_blockNumber`` over HTTP.
 
 .. code-block:: javascript
 
   function watch({ environment, onNewBlock })
 
-* ``environment`` Object containing environment variables (e.g., ``rpcWsHost``)
-  passed from the crawler configuration.
-* ``onNewBlock`` Callback function invoked with the new block number when a new
-  block is detected via WebSocket subscription.
+* ``environment`` Object containing environment variables (``rpcHttpHost``,
+  ``pollingInterval``) passed from the crawler configuration.
+* ``onNewBlock`` Callback function invoked with the latest block number on
+  every poll that sees a new block.
 
-The ``watch()`` function:
+The ``watch()`` function polls ``eth_blockNumber`` on
+``environment.rpcHttpHost`` every ``environment.pollingInterval`` milliseconds
+and returns an ``unwatch()`` function to stop polling.
 
-* Establishes a WebSocket connection to the RPC endpoint specified in
-  ``environment.rpcWsHost`` (e.g., ``wss://opt-mainnet.g.alchemy.com/v2/YOUR_API_KEY``)
-* Subscribes to new block headers using viem's ``watchBlockNumber``
-* Automatically handles reconnection if the connection is lost
-* Detects and emits missed blocks with ``emitMissed: true``
-* Returns an ``unwatch()`` function to cleanly close the subscription
-
-The function provides real-time block notifications with ~1-2 second latency,
-replacing the previous polling-based approach which used an ``interval``
-parameter.
+``environment.rpcHttpHost`` can be a single URL or a list of URLs. With a list,
+each crawl sends its ``eth_getLogs`` requests to the next URL in turn, which
+spreads the load across providers (e.g. to stay within several free tiers).
 
 .. note::
-   Prior to version 0.6.0, continuous monitoring required a polling-based
-   ``interval`` parameter in the coordinator configuration. This has been
-   replaced with WebSocket subscriptions via the ``watch()`` function for
-   better performance and resource efficiency.
+   Versions 0.6.x subscribed to ``newHeads`` via WebSocket
+   (``environment.rpcWsHost``). Since 0.7.0, ``watch()`` polls over HTTP
+   instead, because many providers bill every ``newHeads`` event.

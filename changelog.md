@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0
+
+- (breaking) `state.watch()` polls `eth_blockNumber` over HTTP (`environment.rpcHttpHost`) every `environment.pollingInterval` ms instead of subscribing to `newHeads` via WebSocket, as many providers bill every `newHeads` event. `environment.rpcWsHost` is no longer used.
+- `environment.rpcHttpHost` accepts a list of URLs. Each crawl sends its requests to the next URL in turn.
+
 ## 0.6.2
 
 - Make eth-fun@0.10.x peer dependency
