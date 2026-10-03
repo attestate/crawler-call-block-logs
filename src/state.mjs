@@ -36,9 +36,10 @@ export async function local(db) {
 
 export function watch({ environment, onNewBlock }) {
   // NOTE: We poll eth_blockNumber instead of subscribing to newHeads via
-  // WebSocket, as many providers bill every newHeads event.
+  // WebSocket, as many providers bill every newHeads event. Polling always
+  // uses the first host; only crawls rotate through the list.
   const client = createPublicClient({
-    transport: http(rpcHttpHost(environment)),
+    transport: http([environment.rpcHttpHost].flat()[0]),
   });
 
   return client.watchBlockNumber({

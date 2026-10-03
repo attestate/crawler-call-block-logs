@@ -58,3 +58,46 @@ test("watch polls eth_blockNumber over HTTP", async (t) => {
   t.true(blocks[1] > blocks[0]);
 });
 
+
+test("watch always polls the first host of a list", async (t) => {
+  const hits = [];
+  const servers = await Promise.all(
+    ["first", "second"].map(
+      (name) =>
+        new Promise((resolve) => {
+          const server = createServer((req, res) => {
+            let body = "";
+            req.on("data", (chunk) => (body += chunk));
+            req.on("end", () => {
+              hits.push(name);
+              const { id } = JSON.parse(body);
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify({ jsonrpc: "2.0", id, result: `0x${(0x100 + hits.length).toString(16)}` }));
+            });
+          });
+          server.listen(0, () => resolve(server));
+        }),
+    ),
+  );
+  const environment = {
+    rpcHttpHost: servers.map((s) => `http://127.0.0.1:${s.address().port}`),
+    pollingInterval: 50,
+  };
+
+  await new Promise((resolve) => {
+    let calls = 0;
+    const unwatch = state.watch({
+      environment,
+      onNewBlock: () => {
+        if (++calls === 3) {
+          unwatch();
+          resolve();
+        }
+      },
+    });
+  });
+  servers.forEach((s) => s.close());
+
+  t.true(hits.length >= 3);
+  t.true(hits.every((name) => name === "first"));
+});
