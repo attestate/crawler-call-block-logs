@@ -57,3 +57,33 @@ test("watch polls eth_blockNumber over HTTP when no rpcWsHost is set", async (t)
 
   t.true(blocks[1] > blocks[0]);
 });
+
+test("watch falls back to the next HTTP host when the first one fails", async (t) => {
+  const server = createServer((req, res) => {
+    let body = "";
+    req.on("data", (chunk) => (body += chunk));
+    req.on("end", () => {
+      const { id } = JSON.parse(body);
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ jsonrpc: "2.0", id, result: "0x100" }));
+    });
+  });
+  await new Promise((resolve) => server.listen(0, resolve));
+  const { port } = server.address();
+
+  const blockNumber = await new Promise((resolve) => {
+    const unwatch = state.watch({
+      environment: {
+        rpcHttpHost: ["http://127.0.0.1:1", `http://127.0.0.1:${port}`],
+        pollingInterval: 50,
+      },
+      onNewBlock: (blockNumber) => {
+        unwatch();
+        resolve(blockNumber);
+      },
+    });
+  });
+  server.close();
+
+  t.is(blockNumber, 0x100n);
+});

@@ -82,18 +82,22 @@ monitoring via WebSocket subscriptions.
 * ``onNewBlock`` Callback function invoked with the new block number when a new
   block is detected via WebSocket subscription.
 
-The ``watch()`` function:
+The ``watch()`` function works in one of two modes:
 
-* Establishes a WebSocket connection to the RPC endpoint specified in
-  ``environment.rpcWsHost`` (e.g., ``wss://opt-mainnet.g.alchemy.com/v2/YOUR_API_KEY``)
-* Subscribes to new block headers using viem's ``watchBlockNumber``
-* Automatically handles reconnection if the connection is lost
-* Detects and emits missed blocks with ``emitMissed: true``
-* Returns an ``unwatch()`` function to cleanly close the subscription
+* **WebSocket** (``environment.rpcWsHost`` is set): subscribes to new block
+  headers (``newHeads``) using viem's ``watchBlockNumber``, reconnects
+  automatically and emits missed blocks. Latency is ~1-2 seconds, but many
+  providers bill every ``newHeads`` event.
+* **HTTP polling** (no ``rpcWsHost``): polls ``eth_blockNumber`` on
+  ``environment.rpcHttpHost`` every ``environment.pollingInterval``
+  milliseconds (default ``5000``). If ``rpcHttpHost`` is a list, polling uses
+  the first host and falls back to the next ones on errors.
 
-The function provides real-time block notifications with ~1-2 second latency,
-replacing the previous polling-based approach which used an ``interval``
-parameter.
+Either way, it returns an ``unwatch()`` function to stop watching.
+
+``environment.rpcHttpHost`` can be a single URL or a list of URLs. With a list,
+each crawl sends its ``eth_getLogs`` requests to the next URL in turn, which
+spreads the load across providers (e.g. to stay within several free tiers).
 
 .. note::
    Prior to version 0.6.0, continuous monitoring required a polling-based
