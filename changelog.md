@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+- `state.watch()` always polls the first `rpcHttpHost`. Before, it took a host from the same rotating counter as the crawls, so with several hosts it could poll a later one.
+
 ## 0.7.0
 
 - (breaking) `state.watch()` polls `eth_blockNumber` over HTTP (`environment.rpcHttpHost`) every `environment.pollingInterval` ms instead of subscribing to `newHeads` via WebSocket, as many providers bill every `newHeads` event. `environment.rpcWsHost` is no longer used.
