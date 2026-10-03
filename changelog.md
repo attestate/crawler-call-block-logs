@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.6.3
+## 0.7.0
 
-- `state.watch()` polls `eth_blockNumber` over HTTP (`environment.rpcHttpHost`, every `environment.pollingInterval` ms, default 5000) when no `rpcWsHost` is set, instead of throwing. This avoids per-block `newHeads` billing.
-- `environment.rpcHttpHost` accepts a list of URLs. Crawls rotate through them, and polling falls back to the next URL on errors.
+- (breaking) `state.watch()` polls `eth_blockNumber` over HTTP (`environment.rpcHttpHost`) every `environment.pollingInterval` ms (default 5000) instead of subscribing to `newHeads` via WebSocket, as many providers bill every `newHeads` event. `environment.rpcWsHost` is no longer used.
+- `environment.rpcHttpHost` accepts a list of URLs. Each crawl sends its requests to the next URL in turn.
 
 ## 0.6.2
 

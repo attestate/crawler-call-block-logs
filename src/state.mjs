@@ -1,5 +1,5 @@
 // @format
-import { createPublicClient, fallback, http, webSocket } from "viem";
+import { createPublicClient, http } from "viem";
 
 import { rpcHttpHost } from "./hosts.mjs";
 
@@ -35,22 +35,17 @@ export async function local(db) {
 }
 
 export function watch({ environment, onNewBlock }) {
-  // NOTE: Without a WebSocket host, we poll eth_blockNumber over HTTP instead
-  // of subscribing to newHeads, which many providers bill per block. Polling
-  // uses the first host and falls back to the others if it fails.
-  const polling = !environment.rpcWsHost;
-  const hosts = [environment.rpcHttpHost].flat();
+  // NOTE: We poll eth_blockNumber instead of subscribing to newHeads via
+  // WebSocket, as many providers bill every newHeads event.
   const client = createPublicClient({
-    transport: polling
-      ? fallback(hosts.map((host) => http(host)))
-      : webSocket(environment.rpcWsHost),
+    transport: http(rpcHttpHost(environment)),
   });
 
   return client.watchBlockNumber({
     onBlockNumber: onNewBlock,
     emitOnBegin: false,
-    emitMissed: !polling, // the crawler scans all blocks since its last run
-    poll: polling,
+    emitMissed: false, // the crawler scans all blocks since its last run
+    poll: true,
     pollingInterval: environment.pollingInterval ?? 5000,
   });
 }
