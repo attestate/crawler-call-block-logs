@@ -46,6 +46,6 @@ export function watch({ environment, onNewBlock }) {
     emitOnBegin: false,
     emitMissed: false, // the crawler scans all blocks since its last run
     poll: true,
-    pollingInterval: environment.pollingInterval ?? 5000,
+    pollingInterval: environment.pollingInterval,
   });
 }

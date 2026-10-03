@@ -84,7 +84,7 @@ monitoring by polling ``eth_blockNumber`` over HTTP.
 
 The ``watch()`` function polls ``eth_blockNumber`` on
 ``environment.rpcHttpHost`` every ``environment.pollingInterval`` milliseconds
-(default ``5000``) and returns an ``unwatch()`` function to stop polling.
+and returns an ``unwatch()`` function to stop polling.
 
 ``environment.rpcHttpHost`` can be a single URL or a list of URLs. With a list,
 each crawl sends its ``eth_getLogs`` requests to the next URL in turn, which
