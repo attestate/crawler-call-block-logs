@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3
+
+- `state.watch()` polls `eth_blockNumber` over HTTP (`environment.rpcHttpHost`, every `environment.pollingInterval` ms, default 5000) when no `rpcWsHost` is set, instead of throwing. This avoids per-block `newHeads` billing.
+
 ## 0.6.2
 
 - Make eth-fun@0.10.x peer dependency

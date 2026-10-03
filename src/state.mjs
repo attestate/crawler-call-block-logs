@@ -1,6 +1,5 @@
 // @format
-import { createPublicClient, webSocket } from "viem";
-import { mainnet } from "viem/chains";
+import { createPublicClient, http, webSocket } from "viem";
 
 export async function remote({ execute, environment }) {
   const options = {
@@ -34,25 +33,20 @@ export async function local(db) {
 }
 
 export function watch({ environment, onNewBlock }) {
-  if (!environment.rpcWsHost) {
-    throw new Error(
-      "RPC_WS_HOST is required for WebSocket block subscriptions"
-    );
-  }
-
-  // Create client without hardcoded chain - viem will handle it
+  // NOTE: Without a WebSocket host, we poll eth_blockNumber over HTTP instead
+  // of subscribing to newHeads, which many providers bill per block.
+  const polling = !environment.rpcWsHost;
   const client = createPublicClient({
-    transport: webSocket(environment.rpcWsHost),
+    transport: polling
+      ? http(environment.rpcHttpHost)
+      : webSocket(environment.rpcWsHost),
   });
 
-  const unwatch = client.watchBlockNumber({
-    onBlockNumber: async (blockNumber) => {
-      await onNewBlock(blockNumber);
-    },
+  return client.watchBlockNumber({
+    onBlockNumber: onNewBlock,
     emitOnBegin: false,
-    emitMissed: true, // Emit all missed blocks after reconnection
-    poll: false, // Use WebSocket subscription
+    emitMissed: !polling, // the crawler scans all blocks since its last run
+    poll: polling,
+    pollingInterval: environment.pollingInterval ?? 5000,
   });
-
-  return unwatch;
 }
