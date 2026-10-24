@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `state.watch()` can follow an OP Stack sequencer's block gossip instead of polling `eth_blockNumber`, when `environment.gossip` is set (`true`, `"optimism"` or `{ network, udpPort, maxPeers }`). It validates each block as op-node does and triggers a crawl only when the block's `logsBloom` may hold a log matching the extractor's `args.address`/`args.topics`, or after missed blocks, once the RPC node has the block. Needs `@attestate/crawler` to pass the extractor `args` to `watch()`, and outbound TCP and UDP. Without `environment.gossip`, `watch()` polls as before.
+- New `src/gossip/` modules: `opstack.mjs` (op-node's gossip validation), `bloom.mjs` (logsBloom filter matching), `follow.mjs` (libp2p/discv5 client) and `networks.mjs` (the `optimism` preset).
+
 ## 0.7.1
 
 - `state.watch()` always polls the first `rpcHttpHost`. Before, it took a host from the same rotating counter as the crawls, so with several hosts it could poll a later one.
